@@ -1,0 +1,6 @@
+framework module TestCC {
+  umbrella header "TestCC.h"
+
+  export *
+  module * { export * }
+}

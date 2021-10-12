@@ -19,6 +19,8 @@
     UILabel *lqLb = [[UILabel alloc] initWithFrame:CGRectMake(100, 100, 100, 100)];
     lqLb.text = @"liqiang";
     [self.view addSubview:lqLb];
+//    LQFunc *func = [[LQFunc alloc] init];
+  
     
     // Do any additional setup after loading the view.
 }

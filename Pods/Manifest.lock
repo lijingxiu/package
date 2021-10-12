@@ -1,0 +1,16 @@
+PODS:
+  - TestPodCC (9.10.0)
+
+DEPENDENCIES:
+  - TestPodCC (from `Pods/TestPodCC`)
+
+EXTERNAL SOURCES:
+  TestPodCC:
+    :path: Pods/TestPodCC
+
+SPEC CHECKSUMS:
+  TestPodCC: b4208966c64821c27a54ebad5203ccc709b3c6f0
+
+PODFILE CHECKSUM: c782a843bc8a3d8201808691c436251ec9c3af5d
+
+COCOAPODS: 1.11.2

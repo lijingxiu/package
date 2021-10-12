@@ -6,7 +6,7 @@
 //
 
 #import "AppDelegate.h"
-
+#import "TestCC.h"
 @interface AppDelegate ()
 
 @end

@@ -1,0 +1,25 @@
+{
+  "name": "TestPodCC",
+  "version": "9.10.0",
+  "summary": "测试",
+  "homepage": "http://zhipin.com/",
+  "authors": {
+    "liqiang": "liqiang05@kanzhun.com"
+  },
+  "license": "MIT",
+  "platforms": {
+    "ios": "9.0"
+  },
+  "source": {
+    "git": "https://github.com/haivy/TestCC.git",
+    "tag": "9.10.0"
+  },
+  "resources": [
+    "Products/**/*.{xcasset,bundle}"
+  ],
+  "source_files": "Products/TestCC.framework/**/*.h",
+  "public_header_files": "Products/TestCC.framework/**/*.h",
+  "ios": {
+    "vendored_frameworks": "Products/TestCC.framework"
+  }
+}
