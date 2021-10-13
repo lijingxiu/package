@@ -321,7 +321,7 @@ def checkoutModule(gitName,defaultBranch):
 def buildFramework(name):
  
     #准备最新代码
-    checkoutModule('TestPodCC',currentBranch)
+    checkoutModule(name,currentBranch)
 
     # if not repoHasChanged(name):
     #     print('repo %s not changed since last build framework, will restore from upload folder'%(name))
@@ -383,7 +383,7 @@ def buildAll():
     #创建编译中文件
     createFlag('')
     #拉取models代码
-    buildFramework()
+    buildFramework('TestPodCC')
     removeFlag()
     return
 
