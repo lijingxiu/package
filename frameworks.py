@@ -23,40 +23,8 @@ currentBranch = '%s'%(sys.argv[1])    #will be updated
 uploadFolder = '%s'%(sys.argv[2])
 leading_4_spaces = re.compile('^    ')
 
-modules = [
-    'third',
-    'user',
-    'network',
-    'basic',
-    'models',
-    'optional',
-    'chatbase',
-    'support',
-    'login',
-    'setting',
-    'company',
-    'homepage',
-    'boss',
-    'geek',
-    'chat',
-]
-moduleMap = {
-    'geek':['BZGeek', 'bz_geek'],
-    'boss':['BZBoss', 'bz_boss'],
-    'chat':['BZChat', 'bz_chat'],
-    'chatbase':['BZChatBase', 'bz_chatbase'],
-    'company':['BZCompany', 'bz_company'],
-    'homepage':['BZHomepage', 'bz_homepage'],
-    'login':['BZLogin', 'bz_login'],
-    'setting':['BZSetting', 'bz_setting'],
-    'support':['BZSupport', 'bz_support'],
-    'basic':['BZBasic', 'bz_basic'],
-    'models':['BZModels', 'bz_models'],
-    'network':['BZNetwork', 'bz_network'],
-    'user':['BZUser', 'bz_user'],
-    'third':['BossThirdPart', 'bz_thirdpart'],
-    'optional':['BossOptionalPart', 'bz_optionalpart'],
-}
+
+
 
 rely_modules = {
     'third':[],
@@ -324,62 +292,86 @@ def restoreFramework(name):
     os.system(cmd)
     return True
 
-def buildFramework(name):
-    projName = moduleMap[name][0]
-    frameworkDir = moduleMap[name][1]
-
-    #准备最新代码
-    checkoutModule(frameworkDir,currentBranch)
-
-    if not repoHasChanged(name):
-        print('repo %s not changed since last build framework, will restore from upload folder'%(name))
-        sys.stdout.flush()
-        if restoreFramework(name):
-            print('restored %s from upload folder'%(name))
-            sys.stdout.flush()
-            return
-        else:
-            print('restore failed, will building %s framework from source code'%(name))
-            sys.stdout.flush()
-
-    #准备podfile文件
-    preparePodfile(name)
-
-    #复制依赖的framework
-    copyDepends(name)
-
-    frameworkDir = os.path.join(mainPath,'../%s'%(frameworkDir))
-    podspecPath = findFileWithExtension(frameworkDir,'podspec')
-    filename = os.path.basename(podspecPath)
-    (targetName,extension) = os.path.splitext(filename)
-    targetDir = os.path.join(frameworkDir,targetName)
-    productPath = "%s/Products/%s.framework"%(frameworkDir,targetName)
-
-    #remove old
-    cmd = 'rm -rf "%s"'%(productPath)
-    os.system(cmd)
-
-    #build
-    os.system('cd %s; python process.py'%(targetDir))
-
-    #check
-    if not os.path.exists(productPath):
-        print('Failed to build framework %s'%(name))
-        sys.stdout.flush()
-        sysexit(1,name)
-    productPath = "%s/Products"%(frameworkDir)
-    if os.path.exists(getOutputDir(targetName)):
-        shutil.rmtree(getOutputDir(targetName))
-    shutil.copytree(productPath,getOutputDir(targetName))
-    podspecFrom = os.path.join(mainPath,'frameworks/%s/Products/%s.podspec'%(targetName,targetName))
-    podspecTo = os.path.join(mainPath,'frameworks/%s/%s.podspec'%(targetName,targetName))
-    shutil.move(podspecFrom,podspecTo)
+def checkoutModule(gitName,defaultBranch):
+    branch = defaultBranch
     
-    #恢复仓库
-    uploadFramework(name)
-    updateUploadInfo(name)
-    uploadSourceCode(name)
-    resetRepo(name)
+    print('-------- %s 切换分支到:%s -----------'%(gitName,branch))
+    sys.stdout.flush()
+    path = os.path.join(mainPath,'../%s'%(gitName))
+    if os.path.exists(path):
+        print(gitName+': ')
+        sys.stdout.flush()
+        cmd = 'cd "%s"; git reset --hard HEAD;git pull'%(path)
+        print(cmd)
+        sys.stdout.flush()
+        os.system(cmd)
+        cmd = 'cd "%s";git branch --set-upstream-to=origin/%s %s; git checkout %s 2>/dev/null || git checkout -b %s; git pull'%(path,branch,branch,branch,branch)
+        print(cmd)
+        sys.stdout.flush()
+        os.system(cmd)
+        return
+    
+    repo = 'lijingxiu'
+    cmd = 'cd "%s/.."; git clone "git@github.com:%s/%s.git"; cd "%s";git branch --set-upstream-to=origin/%s %s; git checkout %s 2>/dev/null || git checkout -b %s; git pull'%(mainPath,repo,gitName,path,branch,branch,branch,branch)
+    print(cmd)
+    sys.stdout.flush()
+    os.system(cmd)
+    return
+
+def buildFramework(name):
+ 
+    #准备最新代码
+    checkoutModule('TestPodCC',currentBranch)
+
+    # if not repoHasChanged(name):
+    #     print('repo %s not changed since last build framework, will restore from upload folder'%(name))
+    #     sys.stdout.flush()
+    #     if restoreFramework(name):
+    #         print('restored %s from upload folder'%(name))
+    #         sys.stdout.flush()
+    #         return
+    #     else:
+    #         print('restore failed, will building %s framework from source code'%(name))
+    #         sys.stdout.flush()
+
+    # #准备podfile文件
+    # preparePodfile(name)
+
+    # #复制依赖的framework
+    # copyDepends(name)
+
+    # frameworkDir = os.path.join(mainPath,'../%s'%(frameworkDir))
+    # podspecPath = findFileWithExtension(frameworkDir,'podspec')
+    # filename = os.path.basename(podspecPath)
+    # (targetName,extension) = os.path.splitext(filename)
+    # targetDir = os.path.join(frameworkDir,targetName)
+    # productPath = "%s/Products/%s.framework"%(frameworkDir,targetName)
+
+    # #remove old
+    # cmd = 'rm -rf "%s"'%(productPath)
+    # os.system(cmd)
+
+    # #build
+    # os.system('cd %s; python process.py'%(targetDir))
+
+    # #check
+    # if not os.path.exists(productPath):
+    #     print('Failed to build framework %s'%(name))
+    #     sys.stdout.flush()
+    #     sysexit(1,name)
+    # productPath = "%s/Products"%(frameworkDir)
+    # if os.path.exists(getOutputDir(targetName)):
+    #     shutil.rmtree(getOutputDir(targetName))
+    # shutil.copytree(productPath,getOutputDir(targetName))
+    # podspecFrom = os.path.join(mainPath,'frameworks/%s/Products/%s.podspec'%(targetName,targetName))
+    # podspecTo = os.path.join(mainPath,'frameworks/%s/%s.podspec'%(targetName,targetName))
+    # shutil.move(podspecFrom,podspecTo)
+    
+    # #恢复仓库
+    # uploadFramework(name)
+    # updateUploadInfo(name)
+    # uploadSourceCode(name)
+    # resetRepo(name)
     return
 
 def buildAll():
@@ -391,9 +383,7 @@ def buildAll():
     #创建编译中文件
     createFlag('')
     #拉取models代码
-    # checkoutModule('bz_models',currentBranch)
-    # for m in modules:
-    #     buildFramework(m)
+    buildFramework()
     # removeFlag()
     # return
 
