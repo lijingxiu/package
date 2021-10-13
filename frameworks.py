@@ -7,7 +7,6 @@ import json
 import commands
 import re
 import shutil
-from biplist import *
 
 
 reload(sys)
