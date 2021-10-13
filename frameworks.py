@@ -384,8 +384,8 @@ def buildAll():
     createFlag('')
     #拉取models代码
     buildFramework()
-    # removeFlag()
-    # return
+    removeFlag()
+    return
 
 buildAll()
 
